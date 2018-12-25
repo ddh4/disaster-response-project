@@ -72,7 +72,7 @@ def build_model():
 
 def evaluate_model(model, X_test, Y_test, category_names):
 
-    predictions = pd.DataFrame(model.predict(X_test, Y_test), columns=category_names)
+    predictions = pd.DataFrame(model.predict(X_test), columns=category_names)
 
     for column in category_names:
         print("Report for {}:\nAccuracy: {:0.2f}% \n{}".format(column, accuracy_score(Y_test[column], predictions[column]), classification_report(Y_test[column], predictions[column])))
