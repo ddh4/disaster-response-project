@@ -29,6 +29,9 @@ def clean_data(df):
     # include 36 new categories
     df = pd.concat([df, categories], axis=1)
 
+    # remove erroneous values in related (non-binary column containing 2)
+    df = df[df['related'] != 2]
+
     # drop duplicates
     df.drop_duplicates(keep='first', inplace=True)
 
@@ -37,6 +40,7 @@ def clean_data(df):
 def save_data(df, database_filename):
     engine = create_engine('sqlite:///{}'.format(database_filename))
     df.to_sql('Messages', engine, index=False, if_exists='replace')
+
 
 
 def main():
