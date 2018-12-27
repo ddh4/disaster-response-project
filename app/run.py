@@ -1,15 +1,11 @@
 import json
 import plotly
 import pandas as pd
-
-from nltk.stem import WordNetLemmatizer
-from nltk.tokenize import word_tokenize
-
 from flask import Flask
 from flask import render_template, request, jsonify
 from plotly.graph_objs import Bar
-#from sklearn.externals import joblib
-import joblib
+from sklearn.externals import joblib
+#import joblib
 from sqlalchemy import create_engine
 
 
@@ -26,12 +22,13 @@ def tokenize(text):
 
     return clean_tokens
 
+
 # load data
 engine = create_engine('sqlite:///../data/DisasterResponse.db')
 df = pd.read_sql_table('Messages', engine)
 
 # load model
-model = joblib.load("../models/classifier.joblib")
+model = joblib.load("../models/classifier.pkl")
 
 
 # index webpage displays cool visuals and receives user input text for model
@@ -40,13 +37,27 @@ model = joblib.load("../models/classifier.joblib")
 def index():
 
     # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
+    # [1] show relative counts for each message genre
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
+
+    # [2] show relative frequency for each message category
+    counts = df.iloc[:, -36:].sum().sort_values().reset_index()
+    counts['rf'] = counts[0]/df.shape[0]
+
+    category_counts = pd.Series(data=counts['rf'].values, index=counts['index'])
+    category_names = list(category_counts.index)
+
+    # [3] show relative frequency of top 5 words in messages of medical categories
+    med_df_results = pd.read_csv('../data/medical_data_top_words.csv', index_col= 0)
+    word_counts = pd.Series(data=med_df_results['rf'].values, index=med_df_results.index)
+    word_names = list(word_counts.index)
+
 
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
     graphs = [
+        # Chart [1]
         {
             'data': [
                 Bar(
@@ -64,7 +75,50 @@ def index():
                     'title': "Genre"
                 }
             }
+        },
+
+        # Chart [2]
+        {
+            'data': [
+                Bar(
+                    x=category_counts,
+                    y=category_names,
+                    orientation='h'
+                )
+            ],
+
+            'layout': {
+                'title': 'Relative Frequency of Message Categories',
+                'yaxis': {
+                    'title': "Category"
+                },
+                'xaxis': {
+                    'title': "Relative Frequency"
+                }
+            }
+        },
+
+        # Chart [3]
+        {
+            'data': [
+                Bar(
+                    x=word_counts,
+                    y=word_names,
+                    orientation='h'
+                )
+            ],
+
+            'layout': {
+                'title': 'Relative Frequency of Top Words in Medical Category Messages',
+                'yaxis': {
+                    'title': "Word"
+                },
+                'xaxis': {
+                    'title': "Relative Frequency"
+                }
+            }
         }
+
     ]
 
     # encode plotly graphs in JSON
