@@ -1,24 +1,41 @@
 {% extends "master.html" %}
 {% block title %}Results{% endblock %}
 
-{% block message %}
-    <hr />
-    <h4 class="text-center">MESSAGE</h4>
-    <p class="text-center"><i>{{query}}</i></p>
-{% endblock %}
 
 {% block content %}
-    <h1 class="text-center">Result</h1>
-        <ul class="list-group">
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h2 class="panel-title"><span class="glyphicon glyphicon-envelope"></span>  Message </h2>
+  </div>
+  <div class="panel-body">
+    <blockquote class="blockquote">
+      <p class="mb-0">{{query}}</p>
+    </blockquote>
+    {% if classification_show >= 1 %}
+      <div class="alert alert-success" role="alert">
+        <strong>Classification:</strong>
             {% for category, classification in classification_result.items() %}
                 {% if classification == 1 %}
-                    <li class="list-group-item list-group-item-success text-center">{{category.replace('_', ' ').title()}}</li>
-                {% else %}
-                    <li class="list-group-item list-group-item-dark text-center">{{category.replace('_', ' ').title()}}</li>
+                  <span class="badge badge-success">{{category.replace('_', ' ').title()}}</span>
                 {% endif %}
             {% endfor %}
-
-        </div>
+      </div>
+    {% else %}
+    <div class="alert alert-danger" role="alert">
+      <strong>No Classification</strong>
     </div>
+    {% endif %}
+    <div class="well well-sm">
+          {% for category, classification in classification_result.items() %}
+              {% if classification == 0 %}
+                <span class="badge badge-secondary">{{category.replace('_', ' ').title()}}</span>
+              {% endif %}
+          {% endfor %}
+    </div>
+
+  </div>
+</div>
+
 
 {% endblock %}
