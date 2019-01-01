@@ -2,7 +2,7 @@
 ### About
 The final output of this project is a web app where an emergency worker can input a new message and get classification results in several categories. The web app will also display visualizations of the data.
 
-(IMG1)
+![app_home](https://user-images.githubusercontent.com/39163121/50575732-9fc5bf00-0dfb-11e9-9f64-af2df01b414b.png)
 
 The project is comprised of three core components:
 1. ETL Pipeline: Loading the categories.csv and messages.csv datasets, merging, cleaning and
