@@ -1,3 +1,13 @@
+"""process_data_visualisations.py docstring.
+
+process_data_visualisations.py is a script created to generate a dataset that
+would be too inefficient to run using the web app. Therefore, this script should
+be run after process_data.py and before the app is run.
+
+This script takes no arguments and outputs a new dataset.
+
+"""
+
 import re
 
 import sys
@@ -11,9 +21,18 @@ from nltk.probability import FreqDist
 
 
 def frequency_distribution(text, n):
-    '''
-    Corpus tokenization, lemmatising, calculation of frequency distributions and returning the n most common.
-    '''
+    """
+    This function generates the corpus and provides tokenization, lemmatisation,
+    calculation of frequency distributions and returns the n most common words
+    for messages containing medical related content.
+
+    Args:
+        text: a string containing the corpus.
+        n: the top n most common words in the corpus.
+
+    Returns:
+        set of the n most common words.
+    """
     # Normalize text
     normalized = re.sub(r"[^a-zA-Z0-9]", " ", text.lower())
     # Word tokenize
@@ -29,6 +48,16 @@ def frequency_distribution(text, n):
 
 
 def medical_graph(df):
+    """
+    This function generates the data that will be plotted in the Flask
+    application.
+
+    Args:
+        df: the dataframe loaded from the SQLite database.
+
+    Returns:
+        a new dataframe containing the results for plotting.
+    """
     med_df = df[(df['medical_help']==1) | (df['medical_products']==1) | (df['hospitals'] == 1)]
     med_corpus = " ".join(med_df.message.values)
     med_dist = frequency_distribution(med_corpus, 5)
